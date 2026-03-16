@@ -18,7 +18,7 @@
 <!-- PWA manifest -->
 <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;SendRoute&quot;,&quot;short_name&quot;:&quot;SendRoute&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23ffffff&quot;,&quot;theme_color&quot;:&quot;%2300A86B&quot;}">
 <meta name="theme-color" content="#00A86B">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://open.er-api.com;script-src 'self' 'unsafe-inline' https://www.googletagmanager.com;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;img-src 'self' data: https:;connect-src 'self' https://open.er-api.com https://api.exchangerate-api.com https://open.er-api.com;frame-ancestors 'none';base-uri 'self';form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://open.er-api.com;script-src 'self' 'unsafe-inline' https://www.googletagmanager.com;style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;img-src 'self' data: https:;font-src 'self' data: https://fonts.gstatic.com;manifest-src 'self' data:;connect-src 'self' https://open.er-api.com https://api.exchangerate-api.com;frame-ancestors 'none';base-uri 'self';form-action 'self' https://sendroute.co;">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
@@ -2042,18 +2042,16 @@ function submitAlert(){
   // Save to localStorage
   DB.addAlert(email);
 
-  // Post to Netlify Forms
-  fetch("/", {
-    method: "POST",
-    headers: {"Content-Type":"application/x-www-form-urlencoded"},
-    body: new URLSearchParams({
-      "form-name": "sendroute-rate-alerts",
-      "bot-field": "",
-      "email":     email
-    }).toString()
-  })
-  .then(res => console.log("Netlify alert POST status:", res.status))
-  .catch(err => console.error("Netlify alert POST error:", err));
+  // Post to Netlify Forms via XMLHttpRequest
+  const xhr3 = new XMLHttpRequest();
+  xhr3.open("POST", "/");
+  xhr3.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr3.onload = () => console.log("Netlify alert POST status:", xhr3.status);
+  xhr3.send(new URLSearchParams({
+    "form-name": "sendroute-rate-alerts",
+    "bot-field": "",
+    "email":     email
+  }).toString());
 
   document.getElementById("alert-ok").style.display = "block";
   document.getElementById("alert-email").value = "";
@@ -2081,21 +2079,19 @@ function submitModal(){
   DB.addMember({name:n, email:e, phone:p, corridor:"Modal"});
   updateMemCount();
 
-  // Post to Netlify Forms
-  fetch("/", {
-    method: "POST",
-    headers: {"Content-Type":"application/x-www-form-urlencoded"},
-    body: new URLSearchParams({
-      "form-name":  "sendroute-waitlist-modal",
-      "bot-field":  "",
-      "name":       n,
-      "email":      e,
-      "phone":      p,
-      "corridor":   "Modal"
-    }).toString()
-  })
-  .then(res => console.log("Netlify modal POST status:", res.status))
-  .catch(err => console.error("Netlify modal POST error:", err));
+  // Post to Netlify Forms via XMLHttpRequest
+  const xhr2 = new XMLHttpRequest();
+  xhr2.open("POST", "/");
+  xhr2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr2.onload = () => console.log("Netlify modal POST status:", xhr2.status);
+  xhr2.send(new URLSearchParams({
+    "form-name":  "sendroute-waitlist-modal",
+    "bot-field":  "",
+    "name":       n,
+    "email":      e,
+    "phone":      p,
+    "corridor":   "Modal"
+  }).toString());
 
   // Show success
   document.getElementById("mform").style.display = "none";
@@ -2125,21 +2121,20 @@ function submitDW(e){
   formData.append("phone",    phone);
   formData.append("corridor", corridor);
 
-  // Post to Netlify Forms
-  fetch("/", {
-    method: "POST",
-    headers: {"Content-Type":"application/x-www-form-urlencoded"},
-    body: new URLSearchParams({
-      "form-name":  "sendroute-waitlist",
-      "bot-field":  "",
-      "name":       name,
-      "email":      email,
-      "phone":      phone,
-      "corridor":   corridor
-    }).toString()
-  })
-  .then(res => console.log("Netlify waitlist POST status:", res.status))
-  .catch(err => console.error("Netlify waitlist POST error:", err));
+  // Post to Netlify Forms via XMLHttpRequest (more reliable on custom domains)
+  const xhr1 = new XMLHttpRequest();
+  xhr1.open("POST", "/");
+  xhr1.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr1.onload = () => console.log("Netlify waitlist POST status:", xhr1.status);
+  xhr1.onerror = (e) => console.error("Netlify waitlist POST error:", e);
+  xhr1.send(new URLSearchParams({
+    "form-name":  "sendroute-waitlist",
+    "bot-field":  "",
+    "name":       name,
+    "email":      email,
+    "phone":      phone,
+    "corridor":   corridor
+  }).toString());
 
   // Show success
   document.getElementById("dwf").style.display = "none";
