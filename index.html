@@ -2043,28 +2043,28 @@ function calcUpdate(){
 // ── RATE ALERT ──
 function submitAlert(){
   const email = document.getElementById("alert-email").value.trim();
-  if(!email || !email.includes("@")){ alert("Please enter a valid email address."); return; }
+  if(!email || !email.includes("@")){ alert("Please enter a valid email."); return; }
 
-  // Save to localStorage
+  // Save to admin panel
   DB.addAlert(email);
 
-  // Post to Formspree
-  if(!FORMSPREE_ID.includes("REPLACE")){
-    fetch("https://formspree.io/f/" + FORMSPREE_ID, {
-      method: "POST",
-      headers: {"Accept":"application/json","Content-Type":"application/json"},
-      body: JSON.stringify({email, type:"rate-alert",
-        _subject: "New SendRoute rate alert: " + email})
+  // Send to Formspree
+  fetch("https://formspree.io/f/mqeyykqd", {
+    method: "POST",
+    headers: {"Accept":"application/json","Content-Type":"application/json"},
+    body: JSON.stringify({
+      email, type:"rate-alert",
+      _subject: "New rate alert signup: " + email
     })
-    .then(r => console.log("Formspree alert status:", r.status))
-    .catch(e => console.error("Formspree error:", e));
-  }
+  })
+  .then(r => console.log("Formspree alert:", r.status))
+  .catch(err => console.error("Formspree error:", err));
 
   document.getElementById("alert-ok").style.display = "block";
   document.getElementById("alert-email").value = "";
 }
 
-// ── MODAL ──
+
 function openModal(){
   document.getElementById("modal").classList.add("open");
   document.body.style.overflow = "hidden";
@@ -2082,66 +2082,63 @@ function submitModal(){
   const p = document.getElementById("mph").value.trim();
   if(!n||!e||!p){ alert("Please fill in all fields."); return; }
 
-  // Save to localStorage
+  // Save to admin panel
   DB.addMember({name:n, email:e, phone:p, corridor:"Modal"});
   updateMemCount();
 
-  // Post to Formspree
-  if(!FORMSPREE_ID.includes("REPLACE")){
-    fetch("https://formspree.io/f/" + FORMSPREE_ID, {
-      method: "POST",
-      headers: {"Accept":"application/json","Content-Type":"application/json"},
-      body: JSON.stringify({name:n, email:e, phone:p, corridor:"Modal",
-        _subject: "New SendRoute signup: " + n})
+  // Send to Formspree
+  fetch("https://formspree.io/f/mqeyykqd", {
+    method: "POST",
+    headers: {"Accept":"application/json","Content-Type":"application/json"},
+    body: JSON.stringify({
+      name:n, email:e, phone:p, corridor:"Modal",
+      _subject: "New SendRoute signup: " + n
     })
-    .then(r => console.log("Formspree modal status:", r.status))
-    .catch(e => console.error("Formspree error:", e));
-  }
+  })
+  .then(r => console.log("Formspree modal:", r.status))
+  .catch(err => console.error("Formspree error:", err));
 
   // Show success
   document.getElementById("mform").style.display = "none";
   document.getElementById("mok").classList.add("show");
-  setTimeout(()=>{ closeModal(); rerender();
+  setTimeout(()=>{
+    closeModal(); rerender();
     document.getElementById("mform").style.display = "";
     document.getElementById("mok").classList.remove("show");
   }, 2800);
 }
 
+
 function submitDW(e){
   e.preventDefault();
-  const name     = document.getElementById("dwnm").value;
-  const email    = document.getElementById("dwem").value;
-  const phone    = document.getElementById("dwph").value;
-  const corridor = document.getElementById("dwco").value || "—";
+  const name     = document.getElementById("dwnm").value.trim();
+  const email    = document.getElementById("dwem").value.trim();
+  const phone    = document.getElementById("dwph").value.trim();
+  const corridor = document.getElementById("dwco").value.trim() || "Not specified";
 
-  // Save to localStorage (admin panel)
+  if(!name||!email){ alert("Please enter your name and email."); return; }
+
+  // Save to admin panel localStorage
   DB.addMember({name, email, phone, corridor});
   updateMemCount(); rerender();
 
-  // ALSO post to Netlify Forms so Zapier can trigger
-  const formData = new FormData();
-  formData.append("form-name", "sendroute-waitlist");
-  formData.append("name",     name);
-  formData.append("email",    email);
-  formData.append("phone",    phone);
-  formData.append("corridor", corridor);
-
-  // Post to Formspree — instant email notification + Zapier trigger
-  if(!FORMSPREE_ID.includes("REPLACE")){
-    fetch("https://formspree.io/f/" + FORMSPREE_ID, {
-      method: "POST",
-      headers: {"Accept":"application/json","Content-Type":"application/json"},
-      body: JSON.stringify({name, email, phone, corridor,
-        _subject: "New SendRoute signup: " + name})
+  // Send to Formspree
+  fetch("https://formspree.io/f/mqeyykqd", {
+    method: "POST",
+    headers: {"Accept":"application/json","Content-Type":"application/json"},
+    body: JSON.stringify({
+      name, email, phone, corridor,
+      _subject: "New SendRoute signup: " + name
     })
-    .then(r => console.log("Formspree status:", r.status))
-    .catch(e => console.error("Formspree error:", e));
-  }
+  })
+  .then(r => { console.log("Formspree:", r.status); })
+  .catch(e => console.error("Formspree error:", e));
 
   // Show success
   document.getElementById("dwf").style.display = "none";
   document.getElementById("dwok").classList.add("show");
 }
+
 
 function rerender(){
   const from = document.getElementById("fsfr").value;
