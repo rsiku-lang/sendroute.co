@@ -899,12 +899,17 @@ footer{background:var(--INK);padding:56px 0 28px}
           <div class="fc-avs"><div class="fc-av">A</div><div class="fc-av">K</div><div class="fc-av">T</div><div class="fc-av">N</div><div class="fc-av">+</div></div>
           <span class="fc-mt"><strong id="memc">3,000+ people</strong> have already joined</span>
         </div>
-        <form id="dwf" onsubmit="submitDW(event)">
-          <div class="fld"><label class="flbl">Full Name</label><input class="finp" type="text" id="dwnm" placeholder="Your full name" required autocomplete="name"></div>
-          <div class="fld"><label class="flbl">Email Address</label><input class="finp" type="email" id="dwem" placeholder="you@email.com" required autocomplete="email"></div>
-          <div class="fld"><label class="flbl">Mobile Number</label><input class="finp" type="tel" id="dwph" placeholder="+44 7700 000000" required autocomplete="tel"></div>
+        <form id="dwf" name="sendroute-waitlist" method="POST" 
+          data-netlify="true" 
+          data-netlify-honeypot="bot-field"
+          onsubmit="submitDW(event)">
+          <input type="hidden" name="form-name" value="sendroute-waitlist">
+          <p style="display:none"><input name="bot-field"></p>
+          <div class="fld"><label class="flbl">Full Name</label><input class="finp" type="text" id="dwnm" name="name" placeholder="Your full name" required autocomplete="name"></div>
+          <div class="fld"><label class="flbl">Email Address</label><input class="finp" type="email" id="dwem" name="email" placeholder="you@email.com" required autocomplete="email"></div>
+          <div class="fld"><label class="flbl">Mobile Number</label><input class="finp" type="tel" id="dwph" name="phone" placeholder="+44 7700 000000" required autocomplete="tel"></div>
           <div class="fld"><label class="flbl">Usual Corridor (optional)</label>
-            <input class="finp" type="text" id="dwco" placeholder="e.g. UK to Nigeria" list="colist" autocomplete="off">
+            <input class="finp" type="text" id="dwco" name="corridor" placeholder="e.g. UK to Nigeria" list="colist" autocomplete="off">
             <datalist id="colist"><option value="UK to Nigeria"><option value="UK to Ghana"><option value="UK to Kenya"><option value="UK to Zimbabwe"><option value="USA to Nigeria"><option value="Canada to Nigeria"><option value="Europe to Nigeria"><option value="Switzerland to Nigeria"></datalist>
           </div>
           <button type="submit" class="fsub">Unlock My Top 3 Rates →</button>
@@ -951,8 +956,11 @@ footer{background:var(--INK);padding:56px 0 28px}
       <p class="alert-p">Drop your email and we'll notify you when the rate on your corridor hits its best point. No spam — just one alert when it matters.</p>
     </div>
     <div>
+      <form name="sendroute-rate-alerts" method="POST" data-netlify="true" data-netlify-honeypot="bot-alert" style="display:contents" onsubmit="return false;">
+        <input type="hidden" name="form-name" value="sendroute-rate-alerts">
+        <p style="display:none"><input name="bot-alert"></p>
       <div class="alert-form">
-        <input class="alert-inp" type="email" id="alert-email" placeholder="your@email.com" autocomplete="email">
+        <input class="alert-inp" type="email" id="alert-email" name="email" placeholder="your@email.com" autocomplete="email">
         <button class="alert-btn" onclick="submitAlert()">Set Alert</button>
       </div>
       <div id="alert-ok" style="display:none;font-size:13px;color:#6EE7B7;margin-top:10px;font-weight:600;">✓ Alert set! We'll notify you when rates move in your favour.</div>
@@ -1069,12 +1077,17 @@ footer{background:var(--INK);padding:56px 0 28px}
     <div class="mh"><div class="mht">Unlock Your Top 3 Rates</div><div class="mhs">Join DeepWell Capital — free, instant, permanent</div></div>
     <div class="mbody">
       <div id="mform">
-        <div class="fld"><label class="flbl">Full Name</label><input class="finp" type="text" id="mnm" placeholder="Your full name" required></div>
-        <div class="fld"><label class="flbl">Email Address</label><input class="finp" type="email" id="mem" placeholder="you@email.com" required></div>
-        <div class="fld"><label class="flbl">Mobile Number</label><input class="finp" type="tel" id="mph" placeholder="+44 7700 000000" required></div>
+        <form id="modal-form-inner" name="sendroute-waitlist-modal" method="POST"
+              data-netlify="true" data-netlify-honeypot="bot-field-modal"
+              style="display:contents" onsubmit="return false;">
+          <input type="hidden" name="form-name" value="sendroute-waitlist-modal">
+          <p style="display:none"><input name="bot-field-modal"></p>
+        <div class="fld"><label class="flbl">Full Name</label><input class="finp" type="text" id="mnm" name="name" placeholder="Your full name" required></div>
+        <div class="fld"><label class="flbl">Email Address</label><input class="finp" type="email" id="mem" name="email" placeholder="you@email.com" required></div>
+        <div class="fld"><label class="flbl">Mobile Number</label><input class="finp" type="tel" id="mph" name="phone" placeholder="+44 7700 000000" required></div>
         <button class="fsub" onclick="submitModal()">Unlock My Top 3 Rates →</button>
         <p class="fdisc">Free. No card. Cancel anytime. UK GDPR compliant.</p>
-      </div>
+      </form></div>
       <div class="fok" id="mok"><div class="fok-ico">🎉</div><div class="fok-t">You're unlocked!</div><p class="fok-s">Welcome to DeepWell Capital. Your top 3 rates are now visible. Check your email for your welcome.</p></div>
     </div>
   </div>
@@ -1275,6 +1288,86 @@ footer{background:var(--INK);padding:56px 0 28px}
       <div class="ah">Live Rate Feed</div>
       <p style="font-size:13px;color:var(--TM);margin-bottom:16px;">Rates auto-fetch from ExchangeRate-API every 60 seconds (free, no key needed). Paste optional API keys below for higher accuracy or rate limits.</p>
       <div id="apiconf" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;"></div>
+    
+      <div class="ah" style="margin-top:28px;">Email Setup — Zoho Mail + Zapier</div>
+      <div class="a-card">
+        <div class="a-card-t" style="margin-bottom:14px;">Set up hello@sendroute.co and partnerships@sendroute.co then automate welcome emails</div>
+        <div style="display:flex;flex-direction:column;gap:0;">
+
+          <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--BD);">
+            <div style="width:28px;height:28px;background:var(--G);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:800;color:white;">1</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--INK);margin-bottom:3px;">Create Zoho Mail account</div>
+            <div style="font-size:12.5px;color:var(--TM);line-height:1.6;">Go to <strong>zoho.com/mail</strong> &rarr; Sign Up &rarr; choose <strong>Mail Lite (&pound;0.80/month)</strong></div></div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--BD);">
+            <div style="width:28px;height:28px;background:var(--G);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:800;color:white;">2</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--INK);margin-bottom:3px;">Add sendroute.co as your domain in Zoho</div>
+            <div style="font-size:12.5px;color:var(--TM);line-height:1.6;">Settings &rarr; Domains &rarr; Add Domain &rarr; type <strong>sendroute.co</strong></div></div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--BD);">
+            <div style="width:28px;height:28px;background:var(--G);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:800;color:white;">3</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--INK);margin-bottom:3px;">Add these DNS records in Namecheap &rarr; Advanced DNS</div>
+            <div style="background:var(--BG);border-radius:var(--R8);padding:12px;font-family:monospace;font-size:11.5px;line-height:2;margin-top:6px;">
+              <div><strong>MX</strong> &nbsp;@&nbsp; mx.zoho.eu &nbsp; Priority: 10</div>
+              <div><strong>MX</strong> &nbsp;@&nbsp; mx2.zoho.eu &nbsp; Priority: 20</div>
+              <div><strong>TXT</strong> &nbsp;@&nbsp; v=spf1 include:zoho.eu ~all</div>
+              <div style="font-size:10.5px;color:var(--TL);margin-top:4px;">Use the exact values Zoho gives you &mdash; they may differ slightly</div>
+            </div></div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--BD);">
+            <div style="width:28px;height:28px;background:var(--G);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:800;color:white;">4</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--INK);margin-bottom:3px;">Create your two email addresses in Zoho</div>
+            <div style="font-size:12.5px;color:var(--TM);line-height:1.6;">
+              Add User &rarr; <strong>hello@sendroute.co</strong> (general enquiries, ICO, legal)<br>
+              Add User &rarr; <strong>partnerships@sendroute.co</strong> (affiliates, advertisers, providers)
+            </div></div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--BD);">
+            <div style="width:28px;height:28px;background:var(--G);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:800;color:white;">5</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--INK);margin-bottom:3px;">Set up Zapier automated emails (free plan)</div>
+            <div style="font-size:12.5px;color:var(--TM);line-height:1.8;">
+              1. Go to <strong>zapier.com</strong> &rarr; create free account<br>
+              2. Create Zap &rarr; <strong>Trigger:</strong> Netlify &rarr; New Form Submission &rarr; <strong>sendroute-waitlist</strong><br>
+              3. <strong>Action 1:</strong> Gmail/Zoho Mail &rarr; Send Email &rarr; To: <em>&#123;&#123;email&#125;&#125;</em> &rarr; paste welcome email below<br>
+              4. <strong>Action 2:</strong> Gmail/Zoho Mail &rarr; Send Email &rarr; To: hello@sendroute.co &rarr; Subject: New signup: <em>&#123;&#123;name&#125;&#125;</em><br>
+              5. Repeat for <strong>sendroute-rate-alerts</strong> form &rarr; send confirmation to <em>&#123;&#123;email&#125;&#125;</em><br>
+              6. Turn Zap on
+            </div></div>
+          </div>
+
+          <div style="display:flex;gap:14px;padding:14px 0;">
+            <div style="width:28px;height:28px;background:var(--G);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:800;color:white;">6</div>
+            <div style="flex:1;">
+              <div style="font-size:13px;font-weight:700;color:var(--INK);margin-bottom:8px;">Welcome email &mdash; copy into Zapier body field</div>
+              <pre id="welcome-email-body" style="font-family:var(--F);font-size:12px;color:var(--TM);white-space:pre-wrap;background:var(--BG);border-radius:var(--R8);padding:14px;line-height:1.7;border:1px solid var(--BD);">Hi {{name}},
+
+Welcome to SendRoute. Your top 3 rates are now unlocked.
+
+You now have permanent access to the 3 highest-rate providers for your corridor across all 54 African countries. Every time you visit sendroute.co, the top 3 are visible without signing in again.
+
+You are also on the DeepWell Capital early access list. We are building the first platform that lets the diaspora send money home and build wealth at the same time. More on that soon.
+
+Compare before every transfer: sendroute.co
+
+Your corridor: {{corridor}}
+
+Questions? Reply to this email.
+
+The SendRoute Team
+sendroute.co</pre>
+              <button onclick="copyWelcomeEmail()" id="copy-welcome-btn"
+                style="margin-top:8px;padding:8px 16px;background:var(--G);border:none;border-radius:var(--R8);font-family:var(--F);font-size:12.5px;font-weight:700;color:white;cursor:pointer;">
+                Copy Welcome Email
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div><!-- end apis pane -->
 
 
@@ -1353,6 +1446,15 @@ footer{background:var(--INK);padding:56px 0 28px}
             <button onclick="exportCSV('clicks_detail')" style="width:100%;padding:9px;background:var(--BG);border:1px solid var(--BD);border-radius:var(--R4);font-size:12.5px;font-weight:600;color:var(--TM);cursor:pointer;">Detailed Export</button>
           </div>
         </div>
+      </div>
+
+      
+      <!-- AFFILIATE OUTREACH TEMPLATES -->
+      <div class="ah" style="margin-top:28px;">Affiliate Outreach Email Templates</div>
+      <p style="font-size:13px;color:var(--TM);margin-bottom:16px;">Ready-to-send emails for each affiliate programme. Click "Copy Email" — then paste into your partnerships@sendroute.co inbox and send.</p>
+
+      <div style="display:flex;flex-direction:column;gap:12px;" id="email-templates">
+        <!-- Templates rendered by JS -->
       </div>
 
       <!-- Mailchimp instructions -->
@@ -2102,6 +2204,7 @@ function renderAdmin(){
   loadAdFields();
   buildLogoGrid();
   populateReportProviders();
+  renderEmailTemplates();
 }
 
 function saveApi(id){
@@ -2283,6 +2386,188 @@ function copyEmails(type){
     const orig = btn.textContent;
     btn.textContent = `Copied ${emails.length} emails!`;
     setTimeout(()=>btn.textContent=orig, 2500);
+  });
+}
+
+
+// ── AFFILIATE OUTREACH EMAIL TEMPLATES ──
+const AFFILIATE_EMAILS = [
+  {
+    id: "lemfi",
+    to: "partners@lemfi.com",
+    subject: "Affiliate Partnership Enquiry — SendRoute.co",
+    body: `Hi LemFi Partnerships Team,
+
+My name is Rae, founder of SendRoute (sendroute.co) — a free remittance rate comparison platform serving the African diaspora across 54 countries.
+
+We currently feature LemFi in our comparison table and your rates consistently rank highly for GBP and USD corridors to Nigeria, Ghana, and Kenya. We have an engaged audience actively comparing providers before every transfer.
+
+I'd love to explore an affiliate partnership where we direct high-intent users to LemFi in exchange for a referral commission on completed transfers.
+
+Could you share details of your affiliate programme or connect me with the right person?
+
+Best regards,
+Rae
+Founder, SendRoute
+sendroute.co
+partnerships@sendroute.co`
+  },
+  {
+    id: "wise",
+    to: "affiliates@wise.com",
+    subject: "Affiliate Programme Application — SendRoute.co",
+    body: `Hi Wise Affiliates Team,
+
+I'm applying to join the Wise affiliate programme on behalf of SendRoute (sendroute.co).
+
+SendRoute is a free money transfer comparison platform focused exclusively on the African diaspora — covering 54 African countries from GBP, USD, EUR, CAD and CHF. Wise is one of our top-ranked providers across multiple corridors.
+
+Our users are high-intent: they visit specifically to compare before transferring, making them ideal candidates for conversion.
+
+I'd like to apply via your affiliate programme at wise.com/gb/affiliate. Please let me know if there's anything you need from me to progress the application.
+
+Best regards,
+Rae
+Founder, SendRoute
+sendroute.co
+partnerships@sendroute.co`
+  },
+  {
+    id: "taptap",
+    to: "partnerships@taptapsend.com",
+    subject: "Affiliate Partnership — SendRoute.co",
+    body: `Hi TapTap Send Team,
+
+I'm Rae, founder of SendRoute (sendroute.co) — a remittance comparison platform for the African diaspora.
+
+TapTap Send's zero-fee model is popular with our users, particularly for West and East African corridors. I'd like to explore an affiliate or referral partnership.
+
+Could you share how your partner programme works and what commission structure you offer?
+
+Best regards,
+Rae
+Founder, SendRoute
+sendroute.co
+partnerships@sendroute.co`
+  },
+  {
+    id: "worldremit",
+    to: "affiliates@worldremit.com",
+    subject: "Affiliate Partnership Enquiry — SendRoute.co",
+    body: `Hi WorldRemit Affiliates Team,
+
+I'm writing to enquire about WorldRemit's affiliate programme (also listed on Awin).
+
+SendRoute (sendroute.co) is a free rate comparison platform for the African diaspora covering 54 countries. WorldRemit is one of our featured providers and regularly ranks well across multiple corridors.
+
+I'm applying via Awin but wanted to reach out directly as well. Could you confirm the best route to get approved and share your current commission rates?
+
+Best regards,
+Rae
+Founder, SendRoute
+sendroute.co
+partnerships@sendroute.co`
+  },
+  {
+    id: "chipper",
+    to: "partnerships@chippercash.com",
+    subject: "Affiliate Partnership — SendRoute.co",
+    body: `Hi Chipper Cash Partnerships Team,
+
+I'm Rae, founder of SendRoute (sendroute.co) — a remittance comparison platform specifically built for the African diaspora.
+
+Chipper Cash is featured on our platform and we see strong interest from users sending to West and East African corridors. I'd like to discuss an affiliate or referral arrangement.
+
+What does your partner programme look like and what would be involved in getting set up?
+
+Best regards,
+Rae
+Founder, SendRoute
+sendroute.co
+partnerships@sendroute.co`
+  },
+  {
+    id: "remitly",
+    to: "via Impact.com",
+    subject: "Remitly — Apply via Impact.com",
+    body: `APPLY VIA IMPACT.COM:
+1. Go to app.impact.com
+2. Sign up as a Publisher
+3. Search for "Remitly" in the marketplace
+4. Apply with your sendroute.co details
+5. In the application notes write:
+
+"SendRoute (sendroute.co) is a remittance comparison platform for the African diaspora covering 54 countries. We feature Remitly prominently and drive high-intent traffic from users actively comparing before transferring. We would like to join Remitly's affiliate programme to earn commission on referred transfers."`
+  },
+  {
+    id: "wu",
+    to: "via CJ.com",
+    subject: "Western Union — Apply via CJ.com",
+    body: `APPLY VIA CJ.COM (Commission Junction):
+1. Go to cj.com
+2. Sign up as a Publisher
+3. Search for "Western Union" in the advertiser directory
+4. Apply with your sendroute.co details
+5. In the application notes write:
+
+"SendRoute (sendroute.co) is a free remittance comparison platform serving the African diaspora across 54 countries. Western Union is one of our featured providers. We would like to join the Western Union affiliate programme to earn commission on transfers referred from our platform."`
+  },
+];
+
+function renderEmailTemplates() {
+  const container = document.getElementById("email-templates");
+  if(!container) return;
+  container.innerHTML = AFFILIATE_EMAILS.map((t,i) => `
+    <div class="a-card" style="border-left:4px solid var(--G);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div class="a-card-t">${PROVS.find(p=>p.id===t.id)?.name || t.id} — To: ${t.to}</div>
+        <div style="display:flex;gap:8px;">
+          <button class="api-sv" style="padding:7px 14px;font-size:12px;" 
+            onclick="copyEmailTemplate(${i})">
+            Copy Email
+          </button>
+          <button onclick="openEmailClient(${i})" 
+            style="padding:7px 14px;background:var(--BG);border:1px solid var(--BD);border-radius:var(--R4);font-size:12px;font-weight:600;color:var(--TM);cursor:pointer;">
+            Open in Mail
+          </button>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:var(--TL);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Subject</div>
+      <div style="font-size:13px;color:var(--INK);font-weight:600;margin-bottom:10px;">${t.subject}</div>
+      <div style="font-size:11px;font-weight:700;color:var(--TL);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Email Body Preview</div>
+      <pre style="font-family:var(--F);font-size:12px;color:var(--TM);white-space:pre-wrap;background:var(--BG);border-radius:var(--R8);padding:12px;line-height:1.6;max-height:140px;overflow-y:auto;">${t.body.slice(0,300)}...</pre>
+      <div id="copy-confirm-${i}" style="display:none;font-size:12px;color:var(--SGT);margin-top:6px;font-weight:600;">✓ Copied to clipboard — paste into partnerships@sendroute.co</div>
+    </div>`).join("");
+}
+
+function copyEmailTemplate(i) {
+  const t = AFFILIATE_EMAILS[i];
+  const full = "To: " + t.to + "\nSubject: " + t.subject + "\n\n" + t.body;
+  navigator.clipboard.writeText(full).then(()=>{
+    const el = document.getElementById("copy-confirm-"+i);
+    if(el){ el.style.display="block"; setTimeout(()=>el.style.display="none", 3000); }
+  });
+}
+
+function openEmailClient(i) {
+  const t = AFFILIATE_EMAILS[i];
+  if(t.to.startsWith("via")) {
+    alert(t.body);
+    return;
+  }
+  const mailto = "mailto:" + t.to + 
+    "?subject=" + encodeURIComponent(t.subject) + 
+    "&body=" + encodeURIComponent(t.body);
+  window.open(mailto);
+}
+
+function copyWelcomeEmail(){
+  const el = document.getElementById("welcome-email-body");
+  if(!el) return;
+  navigator.clipboard.writeText(el.innerText).then(()=>{
+    const btn = document.getElementById("copy-welcome-btn");
+    btn.textContent = "Copied!";
+    setTimeout(()=>btn.textContent="Copy Welcome Email Template",2000);
   });
 }
 
