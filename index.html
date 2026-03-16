@@ -2020,7 +2020,17 @@ function calcUpdate(){
 function submitAlert(){
   const email = document.getElementById("alert-email").value.trim();
   if(!email || !email.includes("@")){ alert("Please enter a valid email address."); return; }
+
+  // Save to localStorage
   DB.addAlert(email);
+
+  // Also post to Netlify Forms
+  const formData = new FormData();
+  formData.append("form-name", "sendroute-rate-alerts");
+  formData.append("email", email);
+  fetch("/", {method:"POST", body: formData})
+    .catch(err => console.log("Netlify alert post:", err));
+
   document.getElementById("alert-ok").style.display = "block";
   document.getElementById("alert-email").value = "";
 }
@@ -2042,8 +2052,22 @@ function submitModal(){
   const e = document.getElementById("mem").value.trim();
   const p = document.getElementById("mph").value.trim();
   if(!n||!e||!p){ alert("Please fill in all fields."); return; }
-  DB.addMember({name:n,email:e,phone:p,corridor:"Modal"});
+
+  // Save to localStorage
+  DB.addMember({name:n, email:e, phone:p, corridor:"Modal"});
   updateMemCount();
+
+  // Also post to Netlify Forms
+  const formData = new FormData();
+  formData.append("form-name", "sendroute-waitlist-modal");
+  formData.append("name",  n);
+  formData.append("email", e);
+  formData.append("phone", p);
+  formData.append("corridor", "Modal");
+  fetch("/", {method:"POST", body: formData})
+    .catch(err => console.log("Netlify modal post:", err));
+
+  // Show success
   document.getElementById("mform").style.display = "none";
   document.getElementById("mok").classList.add("show");
   setTimeout(()=>{ closeModal(); rerender();
@@ -2054,15 +2078,29 @@ function submitModal(){
 
 function submitDW(e){
   e.preventDefault();
-  DB.addMember({
-    name:     document.getElementById("dwnm").value,
-    email:    document.getElementById("dwem").value,
-    phone:    document.getElementById("dwph").value,
-    corridor: document.getElementById("dwco").value || "—",
-  });
+  const name     = document.getElementById("dwnm").value;
+  const email    = document.getElementById("dwem").value;
+  const phone    = document.getElementById("dwph").value;
+  const corridor = document.getElementById("dwco").value || "—";
+
+  // Save to localStorage (admin panel)
+  DB.addMember({name, email, phone, corridor});
+  updateMemCount(); rerender();
+
+  // ALSO post to Netlify Forms so Zapier can trigger
+  const formData = new FormData();
+  formData.append("form-name", "sendroute-waitlist");
+  formData.append("name",     name);
+  formData.append("email",    email);
+  formData.append("phone",    phone);
+  formData.append("corridor", corridor);
+
+  fetch("/", {method:"POST", body: formData})
+    .catch(err => console.log("Netlify form post:", err));
+
+  // Show success
   document.getElementById("dwf").style.display = "none";
   document.getElementById("dwok").classList.add("show");
-  updateMemCount(); rerender();
 }
 
 function rerender(){
