@@ -2042,15 +2042,18 @@ function submitAlert(){
   // Save to localStorage
   DB.addAlert(email);
 
-  // Post to Netlify Forms (URL-encoded)
+  // Post to Netlify Forms
   fetch("/", {
     method: "POST",
     headers: {"Content-Type":"application/x-www-form-urlencoded"},
     body: new URLSearchParams({
       "form-name": "sendroute-rate-alerts",
-      email
+      "bot-field": "",
+      "email":     email
     }).toString()
-  }).catch(err => console.log("Netlify alert post:", err));
+  })
+  .then(res => console.log("Netlify alert POST status:", res.status))
+  .catch(err => console.error("Netlify alert POST error:", err));
 
   document.getElementById("alert-ok").style.display = "block";
   document.getElementById("alert-email").value = "";
@@ -2078,15 +2081,21 @@ function submitModal(){
   DB.addMember({name:n, email:e, phone:p, corridor:"Modal"});
   updateMemCount();
 
-  // Post to Netlify Forms (URL-encoded)
+  // Post to Netlify Forms
   fetch("/", {
     method: "POST",
     headers: {"Content-Type":"application/x-www-form-urlencoded"},
     body: new URLSearchParams({
-      "form-name": "sendroute-waitlist-modal",
-      name: n, email: e, phone: p, corridor: "Modal"
+      "form-name":  "sendroute-waitlist-modal",
+      "bot-field":  "",
+      "name":       n,
+      "email":      e,
+      "phone":      p,
+      "corridor":   "Modal"
     }).toString()
-  }).catch(err => console.log("Netlify modal post:", err));
+  })
+  .then(res => console.log("Netlify modal POST status:", res.status))
+  .catch(err => console.error("Netlify modal POST error:", err));
 
   // Show success
   document.getElementById("mform").style.display = "none";
@@ -2116,16 +2125,21 @@ function submitDW(e){
   formData.append("phone",    phone);
   formData.append("corridor", corridor);
 
-  // Netlify static forms need URL-encoded data not multipart
-  const encoded = new URLSearchParams({
-    "form-name": "sendroute-waitlist",
-    name, email, phone, corridor
-  }).toString();
+  // Post to Netlify Forms
   fetch("/", {
     method: "POST",
     headers: {"Content-Type":"application/x-www-form-urlencoded"},
-    body: encoded
-  }).catch(err => console.log("Netlify post:", err));
+    body: new URLSearchParams({
+      "form-name":  "sendroute-waitlist",
+      "bot-field":  "",
+      "name":       name,
+      "email":      email,
+      "phone":      phone,
+      "corridor":   corridor
+    }).toString()
+  })
+  .then(res => console.log("Netlify waitlist POST status:", res.status))
+  .catch(err => console.error("Netlify waitlist POST error:", err));
 
   // Show success
   document.getElementById("dwf").style.display = "none";
