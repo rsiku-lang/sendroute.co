@@ -493,6 +493,24 @@ footer{background:var(--INK);padding:56px 0 28px}
 </head>
 <body>
 
+<!-- NETLIFY FORM DETECTION — hidden, never shown to users -->
+<!-- These tell Netlify which forms to expect POSTed data for -->
+<form name="sendroute-waitlist" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name">
+  <input type="email" name="email">
+  <input type="tel" name="phone">
+  <input type="text" name="corridor">
+</form>
+<form name="sendroute-waitlist-modal" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name">
+  <input type="email" name="email">
+  <input type="tel" name="phone">
+  <input type="text" name="corridor">
+</form>
+<form name="sendroute-rate-alerts" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="email" name="email">
+</form>
+
 <!-- ══ COOKIE CONSENT BANNER ══ -->
 <div class="cookie-banner" id="cookie-banner">
   <p class="cookie-text">
@@ -2024,12 +2042,15 @@ function submitAlert(){
   // Save to localStorage
   DB.addAlert(email);
 
-  // Also post to Netlify Forms
-  const formData = new FormData();
-  formData.append("form-name", "sendroute-rate-alerts");
-  formData.append("email", email);
-  fetch("/", {method:"POST", body: formData})
-    .catch(err => console.log("Netlify alert post:", err));
+  // Post to Netlify Forms (URL-encoded)
+  fetch("/", {
+    method: "POST",
+    headers: {"Content-Type":"application/x-www-form-urlencoded"},
+    body: new URLSearchParams({
+      "form-name": "sendroute-rate-alerts",
+      email
+    }).toString()
+  }).catch(err => console.log("Netlify alert post:", err));
 
   document.getElementById("alert-ok").style.display = "block";
   document.getElementById("alert-email").value = "";
@@ -2057,15 +2078,15 @@ function submitModal(){
   DB.addMember({name:n, email:e, phone:p, corridor:"Modal"});
   updateMemCount();
 
-  // Also post to Netlify Forms
-  const formData = new FormData();
-  formData.append("form-name", "sendroute-waitlist-modal");
-  formData.append("name",  n);
-  formData.append("email", e);
-  formData.append("phone", p);
-  formData.append("corridor", "Modal");
-  fetch("/", {method:"POST", body: formData})
-    .catch(err => console.log("Netlify modal post:", err));
+  // Post to Netlify Forms (URL-encoded)
+  fetch("/", {
+    method: "POST",
+    headers: {"Content-Type":"application/x-www-form-urlencoded"},
+    body: new URLSearchParams({
+      "form-name": "sendroute-waitlist-modal",
+      name: n, email: e, phone: p, corridor: "Modal"
+    }).toString()
+  }).catch(err => console.log("Netlify modal post:", err));
 
   // Show success
   document.getElementById("mform").style.display = "none";
@@ -2095,8 +2116,16 @@ function submitDW(e){
   formData.append("phone",    phone);
   formData.append("corridor", corridor);
 
-  fetch("/", {method:"POST", body: formData})
-    .catch(err => console.log("Netlify form post:", err));
+  // Netlify static forms need URL-encoded data not multipart
+  const encoded = new URLSearchParams({
+    "form-name": "sendroute-waitlist",
+    name, email, phone, corridor
+  }).toString();
+  fetch("/", {
+    method: "POST",
+    headers: {"Content-Type":"application/x-www-form-urlencoded"},
+    body: encoded
+  }).catch(err => console.log("Netlify post:", err));
 
   // Show success
   document.getElementById("dwf").style.display = "none";
