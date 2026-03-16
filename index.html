@@ -1520,6 +1520,12 @@ sendroute.co</pre>
    ================================================================ */
 "use strict";
 
+// ── FORMSPREE ENDPOINT ──
+// 1. Go to formspree.io → sign up free → New Form → copy the ID (8 chars after /f/)
+// 2. Replace mqeyykqd below with your actual ID e.g. "xabc1234"
+// 3. Upload to GitHub — emails will start arriving at hello@sendroute.co instantly
+const FORMSPREE_ID = "mqeyykqd";
+
 // ── SECURITY: HTML ESCAPE ──
 // ALWAYS use this before writing any user input to innerHTML
 function esc(str){
@@ -2042,16 +2048,17 @@ function submitAlert(){
   // Save to localStorage
   DB.addAlert(email);
 
-  // Post to Netlify Forms via XMLHttpRequest
-  const xhr3 = new XMLHttpRequest();
-  xhr3.open("POST", "/");
-  xhr3.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr3.onload = () => console.log("Netlify alert POST status:", xhr3.status);
-  xhr3.send(new URLSearchParams({
-    "form-name": "sendroute-rate-alerts",
-    "bot-field": "",
-    "email":     email
-  }).toString());
+  // Post to Formspree
+  if(!FORMSPREE_ID.includes("REPLACE")){
+    fetch("https://formspree.io/f/" + FORMSPREE_ID, {
+      method: "POST",
+      headers: {"Accept":"application/json","Content-Type":"application/json"},
+      body: JSON.stringify({email, type:"rate-alert",
+        _subject: "New SendRoute rate alert: " + email})
+    })
+    .then(r => console.log("Formspree alert status:", r.status))
+    .catch(e => console.error("Formspree error:", e));
+  }
 
   document.getElementById("alert-ok").style.display = "block";
   document.getElementById("alert-email").value = "";
@@ -2079,19 +2086,17 @@ function submitModal(){
   DB.addMember({name:n, email:e, phone:p, corridor:"Modal"});
   updateMemCount();
 
-  // Post to Netlify Forms via XMLHttpRequest
-  const xhr2 = new XMLHttpRequest();
-  xhr2.open("POST", "/");
-  xhr2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr2.onload = () => console.log("Netlify modal POST status:", xhr2.status);
-  xhr2.send(new URLSearchParams({
-    "form-name":  "sendroute-waitlist-modal",
-    "bot-field":  "",
-    "name":       n,
-    "email":      e,
-    "phone":      p,
-    "corridor":   "Modal"
-  }).toString());
+  // Post to Formspree
+  if(!FORMSPREE_ID.includes("REPLACE")){
+    fetch("https://formspree.io/f/" + FORMSPREE_ID, {
+      method: "POST",
+      headers: {"Accept":"application/json","Content-Type":"application/json"},
+      body: JSON.stringify({name:n, email:e, phone:p, corridor:"Modal",
+        _subject: "New SendRoute signup: " + n})
+    })
+    .then(r => console.log("Formspree modal status:", r.status))
+    .catch(e => console.error("Formspree error:", e));
+  }
 
   // Show success
   document.getElementById("mform").style.display = "none";
@@ -2121,20 +2126,17 @@ function submitDW(e){
   formData.append("phone",    phone);
   formData.append("corridor", corridor);
 
-  // Post to Netlify Forms via XMLHttpRequest (more reliable on custom domains)
-  const xhr1 = new XMLHttpRequest();
-  xhr1.open("POST", "/");
-  xhr1.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  xhr1.onload = () => console.log("Netlify waitlist POST status:", xhr1.status);
-  xhr1.onerror = (e) => console.error("Netlify waitlist POST error:", e);
-  xhr1.send(new URLSearchParams({
-    "form-name":  "sendroute-waitlist",
-    "bot-field":  "",
-    "name":       name,
-    "email":      email,
-    "phone":      phone,
-    "corridor":   corridor
-  }).toString());
+  // Post to Formspree — instant email notification + Zapier trigger
+  if(!FORMSPREE_ID.includes("REPLACE")){
+    fetch("https://formspree.io/f/" + FORMSPREE_ID, {
+      method: "POST",
+      headers: {"Accept":"application/json","Content-Type":"application/json"},
+      body: JSON.stringify({name, email, phone, corridor,
+        _subject: "New SendRoute signup: " + name})
+    })
+    .then(r => console.log("Formspree status:", r.status))
+    .catch(e => console.error("Formspree error:", e));
+  }
 
   // Show success
   document.getElementById("dwf").style.display = "none";
